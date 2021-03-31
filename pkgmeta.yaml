@@ -1,0 +1,18 @@
+package-as: Uber UI Classic
+enable-nolib-creation: no
+
+externals:
+
+move-folders:
+
+ignore:
+
+required-dependencies:
+
+optional-dependencies:
+
+manual-changelog:
+
+license-output:
+
+tools-used:
