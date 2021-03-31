@@ -1,0 +1,23 @@
+## Interface: 11306
+## Version: 1.0
+
+## Author: lorti, Uberlicious, Jadei
+## Notes: Darkens and modifies original Blizzard UI.
+## Title: Uber UI Classic
+## Notes: Darkens the default UI
+## SavedVariables: UberuiDB
+
+config.lua
+options.lua
+
+core\playerframe.lua
+core\targetframe.lua
+
+core\minimap.lua
+core\buffs.lua
+core\auras.lua
+core\miscframes.lua
+# core\arenaframes.lua
+
+core\general.lua
+core\actionbars.lua
