@@ -1,9 +1,6 @@
 local addon, ns = ...
 local targetframes = {}
 
---[[
-	Local Variables
-]]--
 local class = UnitClass("player")
 local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
 
@@ -34,62 +31,36 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 		self.Background:SetPoint("TOPLEFT", 5, -24)
 		self.manabar.pauseUpdates = false
 		self.manabar:Show()
-		-- (N'existe pas sur Classic)
-		-- TextStatusBar_UpdateTextString(self.manabar)
-		-- self.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Flash")
 		self.healthbar:SetSize(119, 29)
 		self.healthbar:ClearAllPoints()
 		self.healthbar:SetPoint("TOPLEFT", 5, -24)
-		-- (N'existe pas sur Classic)
-		-- self.healthbar.LeftText:ClearAllPoints()
-		-- self.healthbar.LeftText:SetPoint("LEFT", self.healthbar, "LEFT", 8, 0)
-		-- self.healthbar.RightText:ClearAllPoints()
-		-- self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -5, 0)
-		-- self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0)
 		self.manabar:ClearAllPoints()
 		self.manabar:SetPoint("TOPLEFT", 5, -52)
 		self.manabar:SetSize(119, 13)
-		-- (N'existe pas sur Classic)
-		-- self.manabar.LeftText:ClearAllPoints()
-		-- self.manabar.LeftText:SetPoint("LEFT", self.manabar, "LEFT", 8, 0)
-		-- self.manabar.RightText:ClearAllPoints()
-		-- self.manabar.RightText:SetPoint("RIGHT", self.manabar, "RIGHT", -5, 0)
-		-- self.manabar.TextString:SetPoint("CENTER", self.manabar, "CENTER", 0, 0)
-
 
 		-- TO CHECK
 		-- for _, nmf in pairs({TargetFrameNumericalThreat:GetRegions()}) do
 		-- 	nmf:Hide()
 		-- end
 
-		--TargetOfTarget (N'existe pas sur Classic)
 		TargetFrameToTHealthBar:ClearAllPoints()
 		TargetFrameToTHealthBar:SetPoint("TOPLEFT", 44, -15)
 		TargetFrameToTHealthBar:SetHeight(8)
 		TargetFrameToTManaBar:ClearAllPoints()
 		TargetFrameToTManaBar:SetPoint("TOPLEFT", 44, -24)
 		TargetFrameToTManaBar:SetHeight(5)
-		-- FocusFrameToTHealthBar:ClearAllPoints()
-		-- FocusFrameToTHealthBar:SetPoint("TOPLEFT", 45, -15)
-		-- FocusFrameToTHealthBar:SetHeight(8)
-		-- FocusFrameToTManaBar:ClearAllPoints()
-		-- FocusFrameToTManaBar:SetPoint("TOPLEFT", 45, -25)
-		-- FocusFrameToTManaBar:SetHeight(3)
-		-- FocusFrameToT.deadText:SetWidth(0.01)
 	else
 		frametexture = uuidb.textures.targetframe
 		local texture = uuidb.textures.statusbars[uuidb.general.bartexture]
 		if uuidb.general.bartexture ~= "Blizzard" then
 			TargetFrameTextureFrameName:Show()
 			TargetFrameNameBackground:SetTexture(texture)
-			FocusFrameNameBackground:SetTexture(texture)
 		end
 		if not uuidb.targetframe.name then
 			TargetFrameTextureFrameName:Show()
 			TargetFrameNameBackground:Hide()
 			FocusFrameNameBackground:Hide()
 			TargetFrameBackground:SetHeight(42)
-			FocusFrameBackground:SetHeight(42)
 		end
 	end
 
@@ -162,11 +133,6 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 			self.healthbar:SetSize(119, 22)
 			self.healthbar:ClearAllPoints()
 			self.healthbar:SetPoint("TOPLEFT", 5, -42)
-			-- self.healthbar.LeftText:ClearAllPoints()
-			-- self.healthbar.LeftText:SetPoint("LEFT", self.healthbar, "LEFT", 8, 0)
-			-- self.healthbar.RightText:ClearAllPoints()
-			-- self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -5, 0)
-			-- self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0)
 			TargetFrameTextureFrameName:SetPoint("CENTER", TargetFrameTextureFrame, "CENTER", -50, 20)
 		end
 		-- self.healthbar
@@ -175,9 +141,6 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 		self.nameBackground:Hide();
 		self.manabar.pauseUpdates = true;
 		self.manabar:Hide();
-		-- self.manabar.TextString:Hide();
-		-- self.manabar.LeftText:Hide();
-		-- self.manabar.RightText:Hide();
 		forceNormalTexture = true;
 		TargetFrameSpellBar.Border:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
 	elseif ( classification == "worldboss" or classification == "elite" ) then
