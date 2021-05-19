@@ -58,10 +58,19 @@ function misc:NameplateTexture()
 			if uuidb.general.bartexture ~= "Blizzard" then
 				local texture = uuidb.textures.statusbars[uuidb.general.bartexture]
 				frame.healthBar:SetStatusBarTexture(texture)
-				frame.myHealPrediction:SetTexture(texture)
-				frame.otherHealPrediction:SetTexture(texture)
-				frame.totalAbsorb:SetTexture(texture)
-				frame.totalAbsorb:SetVertexColor(.6, .9, .9, 1)
+				if frame.myHealPrediction then
+					frame.myHealPrediction:SetTexture(texture)
+				end
+
+				if frame.otherHealPrediction then
+					frame.otherHealPrediction:SetTexture(texture)
+				end
+
+				if frame.totalAbsorb then
+					frame.totalAbsorb:SetTexture(texture)
+					frame.totalAbsorb:SetVertexColor(.6, .9, .9, 1)
+				end
+
 				if frame.castBar ~= nil then
 					frame.castBar:SetStatusBarTexture(texture)
 					frame.castBar.Flash:SetTexture(texture)
