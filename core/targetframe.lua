@@ -1,17 +1,14 @@
 local addon, ns = ...
 local targetframes = {}
-
 local class = UnitClass("player")
 local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
-
-
 local targetframes = CreateFrame("frame")
 targetframes:RegisterEvent("ADDON_LOADED")
+
 targetframes:SetScript("OnEvent", function(self, event)
 	if not (IsAddOnLoaded("EasyFrames")) then
 		hooksecurefunc("TargetFrame_CheckClassification", uui_TargetFrameStyleTargetFrame)
 	end
-
 	if uuidb.targetframe.colortargett ~= ("None") then
 		self:ClassColorTargetEnable()
 	end
@@ -19,9 +16,8 @@ end)
 
 function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 	local classification = UnitClassification(self.unit)
-
 	if uuidb.targetframe.largehealth then
-		TargetFrameTextureFrameTexture:SetTexture("Interface\\Addons\\Uber UI Classic\\textures\\target\\targetingframebig")
+		local frametexture = uuidb.textures.targetframebig
 		self.deadText:ClearAllPoints()
 		self.deadText:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0)
 		self.levelText:SetPoint("RIGHT", self.healthbar, "BOTTOMRIGHT", 63, 10)
@@ -31,36 +27,63 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 		self.Background:SetPoint("TOPLEFT", 5, -24)
 		self.manabar.pauseUpdates = false
 		self.manabar:Show()
+		TextStatusBar_UpdateTextString(self.manabar)
+
+    if self.threatIndicator then
+      self.threatIndicator:SetTexture("Interface\\TargetingFrame\\UI-TargetingFrame-Flash")
+    end
+
 		self.healthbar:SetSize(119, 29)
 		self.healthbar:ClearAllPoints()
 		self.healthbar:SetPoint("TOPLEFT", 5, -24)
+		self.healthbar.LeftText:ClearAllPoints()
+		self.healthbar.LeftText:SetPoint("LEFT", self.healthbar, "LEFT", 8, 0)
+		self.healthbar.RightText:ClearAllPoints()
+		self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -5, 0)
+		self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0)
 		self.manabar:ClearAllPoints()
 		self.manabar:SetPoint("TOPLEFT", 5, -52)
 		self.manabar:SetSize(119, 13)
+		self.manabar.LeftText:ClearAllPoints()
+		self.manabar.LeftText:SetPoint("LEFT", self.manabar, "LEFT", 8, 0)
+		self.manabar.RightText:ClearAllPoints()
+		self.manabar.RightText:SetPoint("RIGHT", self.manabar, "RIGHT", -5, 0)
+		self.manabar.TextString:SetPoint("CENTER", self.manabar, "CENTER", 0, 0)
 
-		-- TO CHECK
-		-- for _, nmf in pairs({TargetFrameNumericalThreat:GetRegions()}) do
-		-- 	nmf:Hide()
-		-- end
+    if TargetFrameNumericalThreat then
+      for _, nmf in pairs({TargetFrameNumericalThreat:GetRegions()}) do
+        nmf:Hide()
+      end
+    end
 
+		-- TargetOfTarget
 		TargetFrameToTHealthBar:ClearAllPoints()
 		TargetFrameToTHealthBar:SetPoint("TOPLEFT", 44, -15)
 		TargetFrameToTHealthBar:SetHeight(8)
 		TargetFrameToTManaBar:ClearAllPoints()
 		TargetFrameToTManaBar:SetPoint("TOPLEFT", 44, -24)
 		TargetFrameToTManaBar:SetHeight(5)
+		FocusFrameToTHealthBar:ClearAllPoints()
+		FocusFrameToTHealthBar:SetPoint("TOPLEFT", 45, -15)
+		FocusFrameToTHealthBar:SetHeight(8)
+		FocusFrameToTManaBar:ClearAllPoints()
+		FocusFrameToTManaBar:SetPoint("TOPLEFT", 45, -25)
+		FocusFrameToTManaBar:SetHeight(3)
+		FocusFrameToT.deadText:SetWidth(0.01)
 	else
 		frametexture = uuidb.textures.targetframe
 		local texture = uuidb.textures.statusbars[uuidb.general.bartexture]
 		if uuidb.general.bartexture ~= "Blizzard" then
 			TargetFrameTextureFrameName:Show()
 			TargetFrameNameBackground:SetTexture(texture)
+			FocusFrameNameBackground:SetTexture(texture)
 		end
 		if not uuidb.targetframe.name then
 			TargetFrameTextureFrameName:Show()
 			TargetFrameNameBackground:Hide()
 			FocusFrameNameBackground:Hide()
 			TargetFrameBackground:SetHeight(42)
+			FocusFrameBackground:SetHeight(42)
 		end
 	end
 
@@ -94,14 +117,14 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 	end
 
 
-	-- get color in use
+	-- Get color in use
 	if uuidb.general.customcolor or uuidb.general.classcolorframes then
 		colors = uuidb.general.customcolorval
 	else
 		colors = uuidb.targetframe.color
 	end
 
-	-- style frames accordingly
+	-- Style frames accordingly
 	local classification = UnitClassification(self.unit)
 	if uuidb.targetframe.largehealth then
 		if uuidb.targetframe.nameinside then
@@ -110,21 +133,20 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 			TargetFrameTextureFrameName:SetPoint("CENTER", TargetFrameTextureFrame, "CENTER", -50, 36)
 		end
 	end
-
 	if (uuidb.targetframe.colortargett == "All" or uuidb.targetframe.colortargett == "Friendly/Hostile" or uuidb.targetframe.colortargett == "Class/Friendly/Hostile") then
 		local red,green,_ = UnitSelectionColor(self.unit)
 		if (red == 0) then
-    	    colors = { r = 0, g = 1, b = 0}
-    	elseif (green == 0) then
-    	    colors = { r = 1, g = 0, b = 0}
-    	else
-    	    colors = { r = 1, g = 1, b = 0}
-    	end
+      colors = { r = 0, g = 1, b = 0}
+    elseif (green == 0) then
+      colors = { r = 1, g = 0, b = 0}
+    else
+      colors = { r = 1, g = 1, b = 0}
     end
+  end
 
-	if ( classification == "minus" ) then
+  if ( classification == "minus" ) then
 		self.borderTexture:SetTexture(frametexture.minus)
-        if uuidb.targetframe.largehealth then
+    if uuidb.targetframe.largehealth then
 			self.borderTexture:SetTexture(frametexture.minus)
 			self.threatIndicator:SetTexture(frametexture.minusflash)
 			self.Background:SetSize(119, 22)
@@ -133,14 +155,23 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 			self.healthbar:SetSize(119, 22)
 			self.healthbar:ClearAllPoints()
 			self.healthbar:SetPoint("TOPLEFT", 5, -42)
+			self.healthbar.LeftText:ClearAllPoints()
+			self.healthbar.LeftText:SetPoint("LEFT", self.healthbar, "LEFT", 8, 0)
+			self.healthbar.RightText:ClearAllPoints()
+			self.healthbar.RightText:SetPoint("RIGHT", self.healthbar, "RIGHT", -5, 0)
+			self.healthbar.TextString:SetPoint("CENTER", self.healthbar, "CENTER", 0, 0)
 			TargetFrameTextureFrameName:SetPoint("CENTER", TargetFrameTextureFrame, "CENTER", -50, 20)
 		end
-		-- self.healthbar
+
+		-- Self.healthbar
 		self.borderTexture:SetTexture(frametexture.minus)
 		self.borderTexture:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
 		self.nameBackground:Hide();
 		self.manabar.pauseUpdates = true;
 		self.manabar:Hide();
+		self.manabar.TextString:Hide();
+		self.manabar.LeftText:Hide();
+		self.manabar.RightText:Hide();
 		forceNormalTexture = true;
 		TargetFrameSpellBar.Border:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
 	elseif ( classification == "worldboss" or classification == "elite" ) then
@@ -201,14 +232,12 @@ function uui_TargetFrameStyleTargetFrame(self, forceNormalTexture)
 		end
 		TargetFrameTextureFramePrestigePortrait:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
 		self.borderTexture:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
-		-- TODO : Debug
-		-- self.borderTexture:SetTexture(frametexture.targetingframe)
+		self.borderTexture:SetTexture(frametexture.targetingframe)
 		if not uuidb.miscframes.pvpicons then
 			TargetFrameTextureFramePrestigePortrait:SetAlpha(0)
 		end
 		TargetFrameToTTextureFrameTexture:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
 	end
-
 end
 
 function targetframes:ClassColorTargetEnable()
@@ -223,12 +252,12 @@ function targetframes:PLAYER_TARGET_CHANGED()
 		else
 			local red,green,_ = UnitSelectionColor("targettarget")
 			if (red == 0) then
-        	    colors = { r = 0, g = 1, b = 0}
-        	elseif (green == 0) then
-        	    colors = { r = 1, g = 0, b = 0}
-        	else
-        	    colors = { r = 1, g = 1, b = 0}
-        	end
+        colors = { r = 0, g = 1, b = 0}
+      elseif (green == 0) then
+        colors = { r = 1, g = 0, b = 0}
+      else
+        colors = { r = 1, g = 1, b = 0}
+      end
 		end
 		TargetFrameToTTextureFrameTexture:SetVertexColor(colors.r, colors.g, colors.b, colors.a)
 	end
@@ -266,6 +295,9 @@ function targetframes:Frames(color)
 		Boss4TargetFrameSpellBar.Border,
 		Boss5TargetFrameSpellBar.Border,
 		TargetFrameSpellBar.Border,
+		FocusFrameSpellBar.Border,
+		FocusFrameTextureFrameTexture, 
+		FocusFrameToTTextureFrameTexture,
 	}) do
 		v:SetVertexColor(color.r, color.g, color.b, color.a)
 	end

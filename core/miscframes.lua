@@ -1,12 +1,11 @@
 local addon, ns = ...
 local misc = {}
-
-
 local misc = CreateFrame("frame")
 misc:RegisterEvent("PLAYER_ENTERING_WORLD")
 misc:RegisterEvent("GROUP_ROSTER_UPDATE")
 misc:RegisterEvent("RAID_ROSTER_UPDATE")
 misc:RegisterEvent("PLAYER_LEAVE_COMBAT")
+misc:RegisterEvent("PLAYER_FOCUS_CHANGED")
 
 misc:SetScript("OnEvent", function(self,event)
 	if (event == "PLAYER_ENTERING_WORLD") then
@@ -16,9 +15,12 @@ misc:SetScript("OnEvent", function(self,event)
 			hooksecurefunc("CompactRaidFrameContainer_LayoutFrames", RaidColor)
 		end
 	end
+
 	if (event == "PLAYER_FOCUS_CHANGED") then
 		self:FocusFrame()
 	end
+
+	misc:ExtraBars()
 	if not (IsAddOnLoaded("VuhDo")) then
 		RaidColor()
 	end
@@ -33,12 +35,12 @@ function misc:FocusFrame()
 			else
 				local red,green,_ = UnitSelectionColor(u)
 				if (red == 0) then
-	        	    colors = { r = 0, g = 1, b = 0}
-	        	elseif (green == 0) then
-	        	    colors = { r = 1, g = 0, b = 0}
-	        	else
-	        	    colors = { r = 1, g = 1, b = 0}
-	        	end
+					colors = { r = 0, g = 1, b = 0}
+				elseif (green == 0) then
+					colors = { r = 1, g = 0, b = 0}
+				else
+					colors = { r = 1, g = 1, b = 0}
+				end
 			end
 		else
 			colors = uuidb.auras.color
@@ -56,6 +58,10 @@ function misc:NameplateTexture()
 			if uuidb.general.bartexture ~= "Blizzard" then
 				local texture = uuidb.textures.statusbars[uuidb.general.bartexture]
 				frame.healthBar:SetStatusBarTexture(texture)
+				frame.myHealPrediction:SetTexture(texture)
+				frame.otherHealPrediction:SetTexture(texture)
+				frame.totalAbsorb:SetTexture(texture)
+				frame.totalAbsorb:SetVertexColor(.6, .9, .9, 1)
 				if frame.castBar ~= nil then
 					frame.castBar:SetStatusBarTexture(texture)
 					frame.castBar.Flash:SetTexture(texture)
@@ -66,10 +72,38 @@ function misc:NameplateTexture()
 	nthook = true
 end
 
+function misc:ExtraBars()
+	local texture = uuidb.textures.statusbars[uuidb.general.bartexture]
+	if uuidb.general.bartexture ~= "Blizzard" then
+		if StatusTrackingBarManager then
+			local st = { StatusTrackingBarManager:GetChildren() }
+			for _,s in pairs(st) do
+				for k,v in pairs(s) do
+						if k == "StatusBar" then
+							v:SetStatusBarTexture(texture)
+						end
+				end
+			end
+		end
+
+		for _,v in pairs({
+			CastingBarFrame,
+			TargetFrameSpellBar,
+			FocusFrameSpellBar,
+			-- Not Available
+			-- ClassNameplateManaBarFrame,
+			}) do
+			v:SetStatusBarTexture(texture)
+		end
+		-- Not Available
+		-- ClassNameplateManaBarFrame.ManaCostPredictionBar:SetTexture(texture)
+		GameTooltipStatusBarTexture:SetTexture(texture)
+	end	
+end
+
 local crfhook = false
 function RaidColor(color)
 	erf = IsAddOnLoaded("EnhancedRaidFrames")
-	--CompactRaidFrameContainer_LayoutFrames(self);
 	if not (color) and uuidb.general.customcolor or uuidb.general.classcolorframes then
 		color = uuidb.general.customcolorval
 	else
@@ -192,7 +226,7 @@ function RaidColor(color)
 	crfhook = true
 	hooksecurefunc("CompactUnitFrame_UpdateRoleIcon", function(frame)
 		if (not frame.roleIcon or not frame.roleIconBorder) then return end
-		local size = frame.roleIcon:GetHeight()	--We keep the height so that it carries from the set up, but we decrease the width to 1 to allow room for things anchored to the role (e.g. name).
+		local size = frame.roleIcon:GetHeight()	-- We keep the height so that it carries from the set up, but we decrease the width to 1 to allow room for things anchored to the role (e.g. name).
 		local raidID = UnitInRaid(frame.unit)
 		if frame.roleIcon:IsShown() then
 			frame.roleIconBorder:Show()
@@ -203,6 +237,7 @@ function RaidColor(color)
 		end
 	end)
 end
+
 
 function misc:PartyColor(color)
 	local partyframes = {
@@ -224,21 +259,23 @@ function misc:PartyColor(color)
 		color = uuidb.playerframe.color
 	end
 
-	-- for i=1,4 do 
-	-- 	_G["PartyMemberFrame"..i.."PVPIcon"]:SetAlpha(0)
-	-- 	_G["PartyMemberFrame"..i.."NotPresentIcon"].Border:SetVertexColor(color)
-	-- 	if not _G["pa"..i.."ri"] then
-	-- 		_G["pa"..i.."ri"] = CreateFrame("Frame", "PartyMemberFrame"..i.."RoleIconBorder", _G["PartyMemberFrame"..i.."RoleIcon"]:GetParent())
-	-- 		_G["pa"..i.."ri"]:SetPoint(_G["PartyMemberFrame"..i.."RoleIcon"]:GetPoint())
-	-- 		_G["pa"..i.."ri"]:SetSize(_G["PartyMemberFrame"..i.."RoleIcon"]:GetSize())
-	-- 		_G["pa"..i.."ri"].texture = _G["pa"..i.."ri"]:CreateTexture()
-	-- 		_G["pa"..i.."ri"].texture:SetPoint(_G["PartyMemberFrame"..i.."RoleIcon"]:GetPoint())
-	-- 		_G["pa"..i.."ri"].texture:SetTexture("Interface\\AddOns\\Uber UI Classic\\textures\\ui-portraitroles")
-	-- 		_G["pa"..i.."ri"].texture:SetSize(_G["PartyMemberFrame"..i.."RoleIcon"]:GetSize())
-	-- 		_G["pa"..i.."ri"].texture:SetTexCoord(0, 0.296875, 0.015625, 0.3125)
-	-- 		_G["pa"..i.."ri"].texture:SetVertexColor(color.r, color.g, color.b, color.a)
-	-- 	end
-	-- end
+	if _G["PartyMemberFrame1PVPIcon"] and _G["PartyMemberFrame1NotPresentIcon"] and _G["pa1ri"] then 
+		for i=1,4 do 
+			_G["PartyMemberFrame"..i.."PVPIcon"]:SetAlpha(0)
+			_G["PartyMemberFrame"..i.."NotPresentIcon"].Border:SetVertexColor(color)
+			if not _G["pa"..i.."ri"] then
+				_G["pa"..i.."ri"] = CreateFrame("Frame", "PartyMemberFrame"..i.."RoleIconBorder", _G["PartyMemberFrame"..i.."RoleIcon"]:GetParent())
+				_G["pa"..i.."ri"]:SetPoint(_G["PartyMemberFrame"..i.."RoleIcon"]:GetPoint())
+				_G["pa"..i.."ri"]:SetSize(_G["PartyMemberFrame"..i.."RoleIcon"]:GetSize())
+				_G["pa"..i.."ri"].texture = _G["pa"..i.."ri"]:CreateTexture()
+				_G["pa"..i.."ri"].texture:SetPoint(_G["PartyMemberFrame"..i.."RoleIcon"]:GetPoint())
+				_G["pa"..i.."ri"].texture:SetTexture("Interface\\AddOns\\Uber UI Classic\\textures\\ui-portraitroles")
+				_G["pa"..i.."ri"].texture:SetSize(_G["PartyMemberFrame"..i.."RoleIcon"]:GetSize())
+				_G["pa"..i.."ri"].texture:SetTexCoord(0, 0.296875, 0.015625, 0.3125)
+				_G["pa"..i.."ri"].texture:SetVertexColor(color.r, color.g, color.b, color.a)
+			end
+		end
+	end
 end
 
 local tthookset = false
@@ -255,6 +292,25 @@ function misc:TooltipColor(color)
 			shoppingTooltip1:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
 			shoppingTooltip2:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
 		end
+	end)
+	hooksecurefunc("SharedTooltip_SetBackdropStyle", function(self, style)
+		if(self:GetName() == "NamePlateTooltip") then
+			print("Error")
+			return
+		end
+
+		local _, itemLink = self:GetItem()
+		if itemLink then
+			if C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItemByID(itemLink) or C_AzeriteItem.IsAzeriteItemByID(itemLink) then
+				return
+			end
+		end
+		if uuidb.general.customcolor or uuidb.general.classcolorframes then
+			color = uuidb.general.customcolorval
+		else
+			color = uuidb.playerframe.color
+		end
+		self:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
 	end)
 	tthookset = true
 end
@@ -317,6 +373,8 @@ function misc:pvpicons(color)
 		PlayerPrestigePortrait:SetAlpha(0)
 		TargetFrameTextureFramePrestigeBadge:SetAlpha(0)
 		TargetFrameTextureFramePrestigePortrait:SetAlpha(0)
+		FocusFrameTextureFramePrestigeBadge:SetAlpha(0)
+		FocusFrameTextureFramePrestigePortrait:SetAlpha(0)
 	end
 end
 
@@ -325,6 +383,7 @@ function misc:ReworkAllColor(color)
 		color = uuidb.miscframes.misccolor
 	end
 	self:NameplateTexture()
+	self:ExtraBars()
 	self:pvpicons(color)
 	self:PartyColor(color)
 	self:TooltipColor(color)

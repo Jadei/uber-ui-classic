@@ -1,26 +1,23 @@
   ---------------------------------------
 -- VARIABLES
 ---------------------------------------
-
---get the addon namespace
 local addon, ns = ...
 local general = {}
---get the config values
 local cfg = ns.cfg
 local dragFrameList = ns.dragFrameList
 
 local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
 local class = UnitClass("player")
+
 ---------------------------------------
 -- ACTIONS
 ---------------------------------------
-
 -- REMOVING UGLY PARTS OF UI
 local general = CreateFrame("frame")
 general:RegisterEvent("PLAYER_LOGIN")
+
 general:SetScript("OnEvent", function(self, event)
 	uuidb.actionbars.overridecol = false
-
 	self:BarTexture(uuidb.general.bartexture)
 	if uuidb.general.classcolorhealth then
 		self:HealthColor()
@@ -40,24 +37,26 @@ end)
 
 local function HealthBars()
 	return {
-        PlayerFrameHealthBar,
-        TargetFrameHealthBar,
-        TargetFrameToTHealthBar,
-        PetFrameHealthBar,
-		PetFrameManaBar,
-	}
+    PlayerFrameHealthBar,
+    TargetFrameHealthBar,
+    TargetFrameToTHealthBar,
+    FocusFrameHealthBar,
+    FocusFrameToTHealthBar,
+    PetFrameHealthBar,
+    PetFrameManaBar,
+  }
 end
 
 local function ManaBars()
-    return {
-        PlayerFrameManaBar,
-        PlayerFrameAlternateManaBar,
-        TargetFrameManaBar,
-        TargetFrameToTManaBar,
-        FocusFrameManaBar,
-        FocusFrameToTManaBar,
-        PetFrameManaBar,
-    }
+  return {
+    PlayerFrameManaBar,
+    PlayerFrameAlternateManaBar,
+    TargetFrameManaBar,
+    TargetFrameToTManaBar,
+    FocusFrameManaBar,
+    FocusFrameToTManaBar,
+    PetFrameManaBar,
+  }
 end
 
 local function NonStatusBars()
@@ -77,7 +76,10 @@ function general:MainMenuColor(color)
 	end
 
 	for _,v in pairs({
-		MainMenuBarTexture0,
+		-- Not Available
+		-- MainMenuBarArtFrameBackground.BackgroundLarge,
+		-- MainMenuBarArtFrameBackground.BackgroundSmall,
+    MainMenuBarTexture0,
 		MainMenuBarTexture1,
 		MainMenuBarTexture2,
 		MainMenuBarTexture3,
@@ -91,6 +93,12 @@ function general:MainMenuColor(color)
 		ReputationWatchBar.StatusBar.WatchBarTexture3,
 		SlidingActionBarTexture0,
 		SlidingActionBarTexture1,
+		-- Not Available
+		-- StatusTrackingBarManager.SingleBarLarge,
+		-- StatusTrackingBarManager.SingleBarLargeUpper,
+		-- StatusTrackingBarManager.SingleBarSmall,
+		-- StatusTrackingBarManager.SingleBarSmallUpper,
+		-- MicroButtonAndBagsBar.MicroBagBar,
 		}) do
 		local frameAtlas = v:GetAtlas()
 		if frameAtlas ~= nil then
@@ -112,7 +120,7 @@ function general:Gryphons(color)
 	if not (color) then
 		color = uuidb.mainmenu.gryphcolor
 	end
-	for _,v in pairs({ MainMenuBarLeftEndCap, MainMenuBarRightEndCap, }) do
+	for _,v in pairs({ MainMenuBarArtFrame.LeftEndCap, MainMenuBarArtFrame.RightEndCap, MainMenuBarLeftEndCap, MainMenuBarRightEndCap }) do
 		if uuidb.mainmenu.gryphon then
 			local frameAtlas = v:GetAtlas()
 			if frameAtlas ~= nil then
@@ -133,111 +141,105 @@ function general:Gryphons(color)
 				v:Show()
 			end
 		else
-			print(v)
 			v:Hide()
 		end
 	end
 end
 
 function general:BarTexture(value)
-    local texture = uuidb.textures.statusbars[value]
-    local healthBars = HealthBars()
-    local manaBars = ManaBars()
-    local nonStatusBars = NonStatusBars()
+  local texture = uuidb.textures.statusbars[value]
+  
+  local healthBars = HealthBars()
+  local manaBars = ManaBars()
+  local nonStatusBars = NonStatusBars()
 
-    for _, healthbar in pairs(healthBars) do
-        healthbar:SetStatusBarTexture(texture)
-		if(healthbar == PetFrameHealthBar or healthbar == PetFrameManaBar) then
-			healthbar.LeftText:SetFont("Fonts\\MORPHEUS.ttf", 9, "OUTLINE")
-			healthbar.RightText:SetFont("Fonts\\MORPHEUS.ttf", 9, "OUTLINE")
-		end
+  for _, healthbar in pairs(healthBars) do
+      healthbar:SetStatusBarTexture(texture)
+      if(healthbar == PetFrameHealthBar or healthbar == PetFrameManaBar) then
+        healthbar.LeftText:SetFont("Fonts\\MORPHEUS.ttf", 10, "OUTLINE")
+        healthbar.RightText:SetFont("Fonts\\MORPHEUS.ttf", 10, "OUTLINE")
+      end
+  end
+
+  if PlayerFrameHealthBar.AnimatedLossBar then
+    PlayerFrameHealthBar.AnimatedLossBar:SetStatusBarTexture(texture) -- Fix for blinking red texture
+  end
+
+  for _, manabar in pairs(manaBars) do
+    manabar:SetStatusBarTexture(texture)
+  end
+
+  local function manaBarTexture(manaBar)
+    currentBar = manaBar.texture:GetTexture()
+    if string.match(currentBar, "UI%-StatusBar") and uuidb.general.bartexture ~= "Blizzard" then
+      manaBar:SetStatusBarTexture(texture)
     end
+  end
 
-	-- Ne marche pas sur Classic
-    -- PlayerFrameHealthBar.AnimatedLossBar:SetStatusBarTexture(texture) -- fix for blinking red texture
+  if (not PlayerFrameManaBar.EasyFramesHookUpdateType) then
+    hooksecurefunc("UnitFrameManaBar_UpdateType", manaBarTexture)
+    PlayerFrameManaBar.EasyFramesHookUpdateType = true
+  end
 
-    for _, manabar in pairs(manaBars) do
-        manabar:SetStatusBarTexture(texture)
-    end
+  for _,v in pairs(nonStatusBars) do
+    v:SetTexture(texture)
+  end
 
-    local function manaBarTexture(manaBar)
-    	currentBar = manaBar.texture:GetTexture()
-    	if string.match(currentBar, "UI%-StatusBar") and uuidb.general.bartexture ~= "Blizzard" then
-        	manaBar:SetStatusBarTexture(texture)
-        end
-    end
-
-    if (not PlayerFrameManaBar.EasyFramesHookUpdateType) then
-        hooksecurefunc("UnitFrameManaBar_UpdateType", manaBarTexture)
-
-        PlayerFrameManaBar.EasyFramesHookUpdateType = true
-    end
-
-    for _,v in pairs(nonStatusBars) do
-    	v:SetTexture(texture)
-    end
-
-	-- Ne marche pas sur Classic
-    -- PlayerFrameTotalAbsorbBar:SetTexture(texture)
-	-- PlayerFrameTotalAbsorbBar:SetVertexColor(.6, .9, .9)
-	-- TargetFrameTotalAbsorbBar:SetTexture(texture)
-	-- TargetFrameTotalAbsorbBar:SetVertexColor(.6, .9, .9)
-
+  if PlayerFrameTotalAbsorbBar then
+    PlayerFrameTotalAbsorbBar:SetTexture(texture)
+	  PlayerFrameTotalAbsorbBar:SetVertexColor(.6, .9, .9)
+  	TargetFrameTotalAbsorbBar:SetTexture(texture)
+  	TargetFrameTotalAbsorbBar:SetVertexColor(.6, .9, .9)
+  end
 end
 
---class color target frames / health
+-- Class color target frames / health
 local function ClassColored(statusbar, unit)
-    if (UnitIsPlayer(unit) and UnitClass(unit)) then
-        -- player
-        if (uuidb.general.classcolorhealth) then
-            local _, class, classColor
-
-            _, class = UnitClass(unit)
-            classColor = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
-
-            statusbar:SetStatusBarColor(classColor.r, classColor.g, classColor.b)
-        else
-            local colors
-
-            if (UnitIsFriend("player", unit)) then
-                colors = {0,1,0}
-            else
-                colors = {1,0,0}
-            end
-
-            statusbar:SetStatusBarColor(colors[1], colors[2], colors[3])
-        end
+  if (UnitIsPlayer(unit) and UnitClass(unit)) then
+    -- Player
+    if (uuidb.general.classcolorhealth) then
+      local _, class, classColor
+      _, class = UnitClass(unit)
+      classColor = CUSTOM_CLASS_COLORS and CUSTOM_CLASS_COLORS[class] or RAID_CLASS_COLORS[class]
+      statusbar:SetStatusBarColor(classColor.r, classColor.g, classColor.b)
     else
-        -- non player
-
-        local colors
-
-        local red, green, _ = UnitSelectionColor(unit)
-
-        if (red == 0) then
-            colors = {0,1,0}
-        elseif (green == 0) then
-            colors = {1,0,0}
-        else
-            colors = {1,1,0}
-        end
-
-        if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
-            colors = {0.5, 0.5, 0.5}
-        end
-
+      local colors
+      if (UnitIsFriend("player", unit)) then
+        colors = {0,1,0}
+      else
+        colors = {1,0,0}
+      end
         statusbar:SetStatusBarColor(colors[1], colors[2], colors[3])
     end
+  else
+    -- Not a player
+    local colors
+    local red, green, _ = UnitSelectionColor(unit)
+
+    if (red == 0) then
+      colors = {0,1,0}
+    elseif (green == 0) then
+      colors = {1,0,0}
+    else
+      colors = {1,1,0}
+    end
+
+    if (not UnitPlayerControlled(unit) and UnitIsTapDenied(unit)) then
+      colors = {0.5, 0.5, 0.5}
+    end
+
+    statusbar:SetStatusBarColor(colors[1], colors[2], colors[3])
+  end
 end
 
 function general:HealthColor()
 	local healthbars = HealthBars()
 
-    for _, healthbar in pairs(healthbars) do
+  for _, healthbar in pairs(healthbars) do
 		if (UnitIsConnected(healthbar.unit)) then
 			ClassColored(healthbar, healthbar.unit)
 		end
-    end
+  end
 end
 
 function general:HealthColorDisable()
@@ -249,9 +251,7 @@ function general:HealthColorDisable()
 end
 
 function general:MicroBar()
-	for _,v in pairs({
-		MicroButtonAndBagsBar,
-	}) do
+	for _,v in pairs({ MicroButtonAndBagsBar }) do
 		if not uuidb.mainmenu.microbuttonbar then
 			local point, rf, rp, ofsx, ofxy = v:GetPoint()
 			v:ClearAllPoints()
@@ -267,9 +267,7 @@ function general:MicroBar()
 end
 
 function general:MicroBar()
-	for _,v in pairs({
-		MicroButtonAndBagsBar,
-	}) do
+	for _,v in pairs({ MicroButtonAndBagsBar }) do
 		if not uuidb.mainmenu.microbuttonbar then
 			local point, rf, rp, ofsx, ofxy = v:GetPoint()
 			v:ClearAllPoints()

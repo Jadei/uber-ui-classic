@@ -1,5 +1,5 @@
-## Interface: 11306
-## Version: 1.0
+## Interface: 20501
+## Version: 1.1
 
 ## Author: lorti, Uberlicious, Jadei
 ## Notes: Darkens and modifies original Blizzard UI.
@@ -9,15 +9,12 @@
 
 config.lua
 options.lua
-
 core\playerframe.lua
 core\targetframe.lua
-
 core\minimap.lua
 core\buffs.lua
 core\auras.lua
 core\miscframes.lua
 # core\arenaframes.lua
-
 core\general.lua
 core\actionbars.lua

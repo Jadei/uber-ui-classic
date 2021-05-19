@@ -21,8 +21,7 @@ function minimap:Color(color)
     }) do
 		v:SetVertexColor(color.r, color.g, color.b, color.a)
 	end
-	--TimeManagerClockButton:SetTexture(uuidb.textures.other.clockbutton)
-	--TimeManagerClockButton:SetTexCoord(0.015625,0.8125,0.015625,0.390625)
+
 	select(2, TimeManagerClockButton:GetRegions()):SetVertexColor(1,1,1)
 end
 
@@ -45,6 +44,9 @@ function minimap:Other()
 	GameTimeFrame:Hide()
 	GameTimeFrame:UnregisterAllEvents()
 	GameTimeFrame.Show = kill
+	MiniMapTracking:Hide()
+	MiniMapTracking.Show = kill
+	MiniMapTracking:UnregisterAllEvents()
 	Minimap:EnableMouseWheel(true)
 	Minimap:SetScript("OnMouseWheel", function(self, z)
 		local c = Minimap:GetZoom()
@@ -52,6 +54,17 @@ function minimap:Other()
 			Minimap:SetZoom(c + 1)
 		elseif(z < 0 and c > 0) then
 			Minimap:SetZoom(c - 1)
+		end
+	end)
+	Minimap:SetScript("OnMouseUp", function(self, btn)
+		-- Commentaires: GameTimeFrame n'existe pas encore
+		-- if btn == "RightButton" and _G.GameTimeFrame then
+		-- 	_G.GameTimeFrame:Click()
+		-- elseif btn == "MiddleButton" then
+		if btn == "MiddleButton" then
+			_G.ToggleDropDownMenu(1, nil, _G.MiniMapTrackingDropDown, self)
+		else
+			_G.Minimap_OnClick(self)
 		end
 	end)
 end

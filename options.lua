@@ -350,15 +350,15 @@ Options:SetScript("OnShow", function(self)
 		UberUI.misc:pvpicons()
 	end)
 
-	local ArenaFrameCol = CreateFrame("CheckButton", "$parentArenaFrameCol", self, "InterfaceOptionsCheckButtonTemplate")
-	ArenaFrameCol:SetPoint("TOPLEFT", LargeHealth, "BOTTOMLEFT", 0, -12)
-	ArenaFrameCol.Text:SetText("Colors Arena Frames")
-	ArenaFrameCol.tooltipText = "Colors arena frames by class."
-	ArenaFrameCol:SetScript("OnClick", function(this)
-		local checked = not not this:GetChecked()
-		PlaySound(checked and SOUND_ON or SOUND_OFF)
-		uuidb.general.colorarenat = checked
-	end)
+	-- local ArenaFrameCol = CreateFrame("CheckButton", "$parentArenaFrameCol", self, "InterfaceOptionsCheckButtonTemplate")
+	-- ArenaFrameCol:SetPoint("TOPLEFT", LargeHealth, "BOTTOMLEFT", 0, -12)
+	-- ArenaFrameCol.Text:SetText("Colors Arena Frames")
+	-- ArenaFrameCol.tooltipText = "Colors arena frames by class."
+	-- ArenaFrameCol:SetScript("OnClick", function(this)
+	-- 	local checked = not not this:GetChecked()
+	-- 	PlaySound(checked and SOUND_ON or SOUND_OFF)
+	-- 	uuidb.general.colorarenat = checked
+	-- end)
 
 	local TexRaid = CreateFrame("CheckButton", "$parentTexRaid", self, "InterfaceOptionsCheckButtonTemplate")
 	TexRaid:SetPoint("LEFT", ArenaFrameCol, "RIGHT", 200, 0)
@@ -404,27 +404,27 @@ Options:SetScript("OnShow", function(self)
 		UberUI.general:ReworkColors(uuidb.general.customcolorval)
 	end)
 
-	local BlizzardArenaFrames = CreateFrame("CheckButton", "$parentBlizzardArenaFrames", self, "InterfaceOptionsCheckButtonTemplate")
-	BlizzardArenaFrames:SetPoint("LEFT", ColorDragonSeparate, "RIGHT", 200, 0)
-	BlizzardArenaFrames.Text:SetText("Hide Arena Frames")
-	BlizzardArenaFrames.tooltipText = "Selecting this option will hide the default blizzard arena frames"
-	BlizzardArenaFrames:SetScript("OnClick", function(this)
-		local checked = not not this:GetChecked()
-		PlaySound(checked and SOUND_ON or SOUND_OFF)
-		uuidb.miscframes.hidedefaultarena = checked
-		UberUI.arenaframes:HideArena()
-	end)
+	-- local BlizzardArenaFrames = CreateFrame("CheckButton", "$parentBlizzardArenaFrames", self, "InterfaceOptionsCheckButtonTemplate")
+	-- BlizzardArenaFrames:SetPoint("LEFT", ColorDragonSeparate, "RIGHT", 200, 0)
+	-- BlizzardArenaFrames.Text:SetText("Hide Arena Frames")
+	-- BlizzardArenaFrames.tooltipText = "Selecting this option will hide the default blizzard arena frames"
+	-- BlizzardArenaFrames:SetScript("OnClick", function(this)
+	-- 	local checked = not not this:GetChecked()
+	-- 	PlaySound(checked and SOUND_ON or SOUND_OFF)
+	-- 	uuidb.miscframes.hidedefaultarena = checked
+	-- 	UberUI.arenaframes:HideArena()
+	-- end)
 
-	local NameplateNum = CreateFrame("CheckButton", "$parentNameplateNum", self, "InterfaceOptionsCheckButtonTemplate")
-	NameplateNum:SetPoint("TOPLEFT", FocusNameInside, "BOTTOMLEFT", 0, -12)
-	NameplateNum.Text:SetText("Nameplate Numbers")
-	NameplateNum.tooltipText = "Selecting this will change nameplate in arenas to show target number instead of name"
-	NameplateNum:SetScript("OnClick", function(this)
-		local checked = not not this:GetChecked()
-		PlaySound(checked and SOUND_ON or SOUND_OFF)
-		uuidb.miscframes.nameplatenumbers = checked
-		UberUI.arenaframes:NameplateNumbers()
-	end)
+	-- local NameplateNum = CreateFrame("CheckButton", "$parentNameplateNum", self, "InterfaceOptionsCheckButtonTemplate")
+	-- NameplateNum:SetPoint("TOPLEFT", FocusNameInside, "BOTTOMLEFT", 0, -12)
+	-- NameplateNum.Text:SetText("Nameplate Numbers")
+	-- NameplateNum.tooltipText = "Selecting this will change nameplate in arenas to show target number instead of name"
+	-- NameplateNum:SetScript("OnClick", function(this)
+	-- 	local checked = not not this:GetChecked()
+	-- 	PlaySound(checked and SOUND_ON or SOUND_OFF)
+	-- 	uuidb.miscframes.nameplatenumbers = checked
+	-- 	UberUI.arenaframes:NameplateNumbers()
+	-- end)
 
 	function self:refresh()
 		Gryphon:SetChecked(uuidb.mainmenu.gryphon)
@@ -438,14 +438,14 @@ Options:SetScript("OnShow", function(self)
 		MicroButtonBagBar:SetChecked(uuidb.mainmenu.microbuttonbar)
 		Pvpicons:SetChecked(uuidb.miscframes.pvpicons)
 		TargetName:SetChecked(uuidb.targetframe.name)
-		ArenaFrameCol:SetChecked(uuidb.general.colorarenat)
+		-- ArenaFrameCol:SetChecked(uuidb.general.colorarenat)
 		CustomColorCheck:SetChecked(uuidb.general.customcolor)
 		TexRaid:SetChecked(uuidb.miscframes.texraidframes)
 		TargetNameInside:SetChecked(uuidb.targetframe.nameinside)
 		FocusNameInside:SetChecked(uuidb.focusframe.nameinside)
 		ColorDragonSeparate:SetChecked(uuidb.targetframe.colordragon)
-		BlizzardArenaFrames:SetChecked(uuidb.miscframes.hidedefaultarena)
-		NameplateNum:SetChecked(uuidb.miscframes.nameplatenumbers)
+		-- BlizzardArenaFrames:SetChecked(uuidb.miscframes.hidedefaultarena)
+		-- NameplateNum:SetChecked(uuidb.miscframes.nameplatenumbers)
 	end
 
 	self:refresh()

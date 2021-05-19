@@ -8,7 +8,6 @@ local classcolor = RAID_CLASS_COLORS[select(2, UnitClass("player"))]
 local class = UnitClass("player")
 local dominos = IsAddOnLoaded("Dominos")
 local bartender4 = IsAddOnLoaded("Bartender4")
-
 local actionbars = CreateFrame("frame")
 actionbars:RegisterEvent("ADDON_LOADED")
 actionbars:SetScript("OnEvent", function(self, event, ...) return self[event] and self[event](self, ...) end)
@@ -18,13 +17,13 @@ if IsAddOnLoaded("Masque") and (dominos or bartender4) then
 end
 
 function actionbars:ADDON_LOADED()
-  --backdrop settings
+   --backdrop settings
   local bgfile, edgefile = "", ""
   if uuidb.actionbars.showshadow then edgefile = uuidb.textures.buttons.outer_shadow end
   if uuidb.actionbars.useflatbackground and uuidb.actionbars.showbg then bgfile = uuidb.textures.buttons.buttonbackflat end
 
   --backdrop
-  local backdrop = {
+ local backdrop = {
     bgFile = bgfile,
     edgeFile = edgefile,
     tile = false,
@@ -40,6 +39,7 @@ function actionbars:ADDON_LOADED()
 
   local abinit = 0
 end
+
 ---------------------------------------
 -- FUNCTIONS
 ---------------------------------------
@@ -66,9 +66,6 @@ local function applyBackground(bu)
     }
   }
 
-  --print(uuidb.general.customcolor)
-  --print(uuidb.general.classcolorframes)
-
   if uuidb.general.customcolor or uuidb.general.classcolorframes then
     backgroundcolor = uuidb.general.customcolorval
     shadowcolor = uuidb.general.customcolorval
@@ -77,48 +74,39 @@ local function applyBackground(bu)
     shadowcolor = uuidb.actionbars.shadowcolor
   end
 
-  --print(backdrop.edgeFile)
   if bu and bu.bg then
     bu.bg:SetBackdropBorderColor(shadowcolor.r,shadowcolor.g,shadowcolor.b,.9)
   end
 
   if not bu or (bu and bu.bg) then return end
   
-  --print("pass")
-  --shadows+background
   if bu:GetFrameLevel() < 1 then bu:SetFrameLevel(1) end
-  
+
   if uuidb.actionbars.showbg or uuidb.actionbars.showshadow then
     bu.bg = CreateFrame("Frame", nil, bu, BackdropTemplateMixin and "BackdropTemplate")
-    -- bu.bg:SetAllPoints(bu)
     bu.bg:SetPoint("TOPLEFT", bu, "TOPLEFT", -4, 4)
     bu.bg:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", 4, -4)
     bu.bg:SetFrameLevel(bu:GetFrameLevel()-1)
-    --print(shadowcolor.r,shadowcolor.g,shadowcolor.b,shadowcolor.a)
-    --print(backdrop.edgeFile)
-    --print(backdrop.bgFile)
   end
 
   if uuidb.actionbars.showbg and not uuidb.actionbars.useflatbackground then
     local t = bu.bg:CreateTexture(nil,"BACKGROUND",-8)
     t:SetTexture(nil)
     t:SetTexture(uuidb.textures.buttons.buttonback)
-    --t:SetAllPoints(bu)
     t:SetVertexColor(backgroundcolor.r,backgroundcolor.g,backgroundcolor.b,backgroundcolor.a)
   end
 
   bu.bg:SetBackdrop(backdrop)
-  
   if uuidb.actionbars.useflatbackground then
     bu.bg:SetBackdropColor(backgroundcolor.r,backgroundcolor.g,backgroundcolor.b,backgroundcolor.a)
   end
-    
+
   if uuidb.actionbars.showshadow then
     bu.bg:SetBackdropBorderColor(shadowcolor.r,shadowcolor.g,shadowcolor.b,.9)
   end
 end
 
---style extraactionbutton
+-- Style extraactionbutton
 local function styleExtraActionButton(bu, color)
   if (color) then
     color = color
@@ -142,38 +130,34 @@ local function styleExtraActionButton(bu, color)
 	local cooldown = bu.cooldown or bu.Cooldown
   local ho = _G[name.."HotKey"]
   
-  -- remove the style background theme
+  -- Remove the style background theme
 	style:SetTexture(nil)
+
   hooksecurefunc(style, "SetTexture", function(self, texture)
     if texture then
-      --print("reseting texture: "..texture)
       self:SetTexture(nil)
     end
   end)
 
-  --icon
+  -- Icon
   icon:SetTexCoord(0.1,0.9,0.1,0.9)
-  
-  --icon:SetAllPoints(bu)
-	icon:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
+  icon:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
   icon:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
-  --cooldown
+  -- Cooldown
   cooldown:SetAllPoints(icon)
-  
-  --hotkey
+  -- Hotkey
 	if ho then
 		ho:Hide()
 	end
-  
-  --add button normaltexture
+  -- Add button normaltexture
   bu:SetNormalTexture(butex)
   local nt = bu:GetNormalTexture()
   nt:SetVertexColor(color.r, color.g, color.b, color.a)
   nt:SetAllPoints(bu)
-  --apply background
+  -- Apply background
   if not bu.bg or uuidb.actionbars.overridecol then applyBackground(bu) end
-
-	bu.Back = CreateFrame("Frame", nil, bu, BackdropTemplateMixin and "BackdropTemplate")
+	
+  bu.Back = CreateFrame("Frame", nil, bu, BackdropTemplateMixin and "BackdropTemplate")
   bu.Back:SetPoint("TOPLEFT", bu, "TOPLEFT", -3, 3)
   bu.Back:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", 3, -3)
   bu.Back:SetFrameLevel(bu:GetFrameLevel() - 1)
@@ -182,7 +166,7 @@ local function styleExtraActionButton(bu, color)
   bu.rabs_styled = true
 end
 
---initial style func
+-- Initial style func
 local function styleActionButton(bu, color)
   if not (color) then
     color = uuidb.actionbars.color.normal
@@ -197,6 +181,7 @@ local function styleActionButton(bu, color)
   overridecol = uuidb.actionbars.overridecol
 
   if not bu or (bu and bu.rabs_styled and not uuidb.actionbars.overridecol) then return end
+
   local action = bu.action
   local name = bu:GetName()
   local ic  = _G[name.."Icon"]
@@ -210,15 +195,13 @@ local function styleActionButton(bu, color)
   local fbg  = _G[name.."FloatingBG"]
   local fob = _G[name.."FlyoutBorder"]
   local fobs = _G[name.."FlyoutBorderShadow"]
-
-  if fbg then fbg:Hide() end  --floating background
+  if fbg then fbg:Hide() end  -- Floating background
   
-  --flyout border stuff
+  -- Flyout border stuff
   if fob then fob:SetTexture(nil) end
   if fobs then fobs:SetTexture(nil) end
-  bo:SetTexture(nil) --hide the border (plain ugly, sry blizz)
-  
-  --hotkey
+  bo:SetTexture(nil) -- Hide the border (plain ugly, sry blizz)
+  -- Hotkey
   if (ho:GetText() ~= nil and string.byte(ho:GetText())) == 226 then
     ho:SetFont("Fonts\\ARIALN.ttf", uuidb.actionbars.hotkeys.fontsize, "OUTLINE")
   else
@@ -231,61 +214,53 @@ local function styleActionButton(bu, color)
   if not dominos and not bartender4 and not uuidb.actionbars.hotkeys.show then
     ho:Hide()
   end
-  
-  --macro name
+
+  -- Macro name
   na:SetFont(uuidb.general.font, uuidb.actionbars.macroname.fontsize, "OUTLINE")
   na:ClearAllPoints()
   na:SetPoint(uuidb.actionbars.macroname.pos1.a1,bu,uuidb.actionbars.macroname.pos1.x,uuidb.actionbars.macroname.pos1.y)
   na:SetPoint(uuidb.actionbars.macroname.pos2.a1,bu,uuidb.actionbars.macroname.pos2.x,uuidb.actionbars.macroname.pos2.y)
+    
   if not dominos and not bartender4 and not uuidb.actionbars.macroname.show then
     na:Hide()
   end
-  
-  --item stack count
+
+  -- Item stack count
   co:SetFont(uuidb.general.font, uuidb.actionbars.count.fontsize, "OUTLINE")
   co:ClearAllPoints()
   co:SetPoint(uuidb.actionbars.count.pos.a1,bu,uuidb.actionbars.count.pos.x,uuidb.actionbars.count.pos.y)
   if not dominos and not bartender4 and not uuidb.actionbars.count.show then
     co:Hide()
   end
-  
-  --applying the textures
+
+  -- Applying the textures
   fl:SetTexture(uuidb.textures.buttons.flash)
-  
-  --bu:SetHighlightTexture(uuidb.textures.buttons.hover)
   bu:SetPushedTexture(uuidb.textures.buttons.pushed)
-  
-  --bu:SetCheckedTexture(uuidb.textures.buttons.checked)
   bu:SetNormalTexture(butex)
-  
+
   if not nt then
-  --fix the non existent texture problem (no clue what is causing this)
+    -- Fix the non existent texture problem (no clue what is causing this)
     nt = bu:GetNormalTexture()
   end
 
-  --cut the default border of the icons and make them shiny
+  -- Cut the default border of the icons and make them shiny
   ic:SetTexCoord(0.1,0.9,0.1,0.9)
   ic:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
   ic:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
-  
-  --adjust the cooldown frame
+  -- Adjust the cooldown frame
   cd:SetPoint("TOPLEFT", bu, "TOPLEFT", uuidb.actionbars.cooldown.spacing, -uuidb.actionbars.cooldown.spacing)
   cd:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -uuidb.actionbars.cooldown.spacing, uuidb.actionbars.cooldown.spacing)
-  
-  --apply the normaltexture
+
+  -- Apply the normaltexture
   if action and (IsEquippedAction(action)) then
     bu:SetNormalTexture(uuidb.textures.buttons.equipped)
-    --nt:SetVertexColor(uuidb.actionbars.color.equipped.r,uuidb.actionbars.color.equipped.g,uuidb.actionbars.color.equipped.b,1)
   else
     bu:SetNormalTexture(butex)
-    --print("hitabvertex")
-    --nt:SetVertexColor(color.r, color.g, color.b, color.a)
   end
-  
-  --make the normaltexture match the buttonsize
+
+  -- Make the normaltexture match the buttonsize
   nt:SetAllPoints(bu)
-  
-  --hook to prevent Blizzard from reseting our colors
+  -- Hook to prevent Blizzard from reseting our colors
   hooksecurefunc(nt, "SetVertexColor", function(nt, r, g, b, a)
     if uuidb.general.customcolor or uuidb.general.classcolorframes then
       color = uuidb.general.customcolorval
@@ -306,16 +281,7 @@ local function styleActionButton(bu, color)
     curGG = math.floor(curG*mult+0.5)/mult
     curBB = math.floor(curB*mult+0.5)/mult
     curAA = math.floor(curA*mult+0.5)/mult
-    -- 66 67
     if (curRR ~= color.r and curGG ~= color.g and curBB ~= color.b and curAA ~= color.a) then
-      --[[print("Action: ", action)
-        print("Current: ", curR, curG, curB, curA)
-        print("New: ", color.r, color.g, color.b, color.a)
-        print("Round: ", curRR, curGG, curBB, curAA)
-        print("Base: ", r, g, b, a)
-        print("color")--]]
-      --print(bu:GetName(), IsEquippedAction(action))
-      --print("bu "..bu:GetName().." R"..r.." G"..g.." B"..b)
       if r==1 and g==1 and b==1 and action and (IsEquippedAction(action)) then
         if uuidb.actionbars.color.equipped.r == 1 and  uuidb.actionbars.color.equipped.g == 1 and  uuidb.actionbars.color.equipped.b == 1 then
           nt:SetVertexColor(0.999,0.999,0.999,1)
@@ -324,7 +290,7 @@ local function styleActionButton(bu, color)
           nt:SetVertexColor(uuidb.actionbars.color.equipped.r, uuidb.actionbars.color.equipped.g, uuidb.actionbars.color.equipped.b, uuidb.actionbars.color.equipped.a)
         end
       elseif r==0.5 and g==0.5 and b==1 then
-        --blizzard oom color
+        -- Blizzard oom color
         if color.r == 0.5 and  color.g == 0.5 and  color.b == 1 then
           nt:SetVertexColor(0.499,0.499,0.999,1)
         else
@@ -343,18 +309,19 @@ local function styleActionButton(bu, color)
     end
   end)
 
-  --shadows+backgroundr
+  -- Shadows+backgroundr
   if not bu.bg or uuidb.actionbars.overridecol then applyBackground(bu) end
   
   bu.rabs_styled = true
-  if bartender4 then --fix the normaltexture
+
+  if bartender4 then -- Fix the normaltexture
     nt:SetTexCoord(0,1,0,1)
     nt.SetTexCoord = function() return end
     bu.SetNormalTexture = function() return end
   end
 end
 
--- style leave button
+-- Style leave button
 local function styleLeaveButton(bu, color)
   if not (color) then
     color = uuidb.actionbars.color.normal
@@ -362,7 +329,6 @@ local function styleLeaveButton(bu, color)
 
   if not bu or (bu and bu.rabs_styled and not uuidb.actionbars.overridecol) then return end
 	
-  --local region = select(1, bu:GetRegions())
 	local name = bu:GetName()
 	local nt = bu:GetNormalTexture()
 	local bo = bu:CreateTexture(name.."Border", "BACKGROUND", nil, -7)
@@ -375,35 +341,35 @@ local function styleLeaveButton(bu, color)
 	bo:SetVertexColor(0.4, 0.35, 0.35)
 	bo:ClearAllPoints()
 	bo:SetAllPoints(bu)
-  
-  --shadows+background
+
+  -- Shadows+background
   if not bu.bg or uuidb.actionbars.overridecol then applyBackground(bu) end
+
   bu.rabs_styled = true
 end
 
---style pet buttons
+-- Style Pet buttons
 local function stylePetButton(bu, color)
   if not (color) then
     color = uuidb.actionbars.color.normal
   end
 
   if not bu or (bu and bu.rabs_styled and not uuidb.actionbars.overridecol) then return end
+
   local name = bu:GetName()
   local ic  = _G[name.."Icon"]
   local fl  = _G[name.."Flash"]
   local nt  = _G[name.."NormalTexture2"]
   nt:SetAllPoints(bu)
-  --applying color
+  -- Applying color
   nt:SetVertexColor(color.r, color.g, color.b, color.a)
-  --setting the textures
+  -- Setting the textures
   fl:SetTexture(uuidb.textures.buttons.flash)
-  --bu:SetHighlightTexture(uuidb.textures.buttons.hover)
   bu:SetPushedTexture(uuidb.textures.buttons.pushed)
-  --bu:SetCheckedTexture(uuidb.textures.buttons.checked)
   bu:SetNormalTexture(butex)
 
   hooksecurefunc(bu, "SetNormalTexture", function(self, texture)
-    --make sure the normaltexture stays the way we want it
+    -- Make sure the normaltexture stays the way we want it
     if uuidb.actionbars.gloss then
       butex = uuidb.textures.buttons.normal
     else
@@ -414,18 +380,19 @@ local function stylePetButton(bu, color)
       self:SetNormalTexture(butex)
     end
   end)
-    
-  --cut the default border of the icons and make them shiny
+
+  -- Cut the default border of the icons and make them shiny
   ic:SetTexCoord(0.1,0.9,0.1,0.9)
 	ic:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
 	ic:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
-  
-  --shadows+background
+    
+  -- Shadows+background
   if not bu.bg or uuidb.actionbars.overridecol then applyBackground(bu) end
+
   bu.rabs_styled = true
 end
 
---style stance buttons
+-- Style stance buttons
 local function styleStanceButton(bu, color)
   if not (color) then
     color = uuidb.actionbars.color.normal
@@ -438,29 +405,30 @@ local function styleStanceButton(bu, color)
   end
 
   if not bu or (bu and bu.rabs_styled and not uuidb.actionbars.overridecol) then return end
+
   local name = bu:GetName()
   local ic  = _G[name.."Icon"]
   local fl  = _G[name.."Flash"]
   local nt  = _G[name.."NormalTexture2"]
   nt:SetAllPoints(bu)
-  --applying color
+  -- Applying color
   nt:SetVertexColor(color.r, color.g, color.b, color.a)
-  --setting the textures
+  -- Setting the textures
   fl:SetTexture(uuidb.textures.buttons.flash)
-  --bu:SetHighlightTexture(uuidb.textures.buttons.hover)
   bu:SetPushedTexture(uuidb.textures.buttons.pushed)
-  --bu:SetCheckedTexture(uuidb.textures.buttons.checked)
   bu:SetNormalTexture(butex)
-  --cut the default border of the icons and make them shiny
+  -- Cut the default border of the icons and make them shiny
   ic:SetTexCoord(0.1,0.9,0.1,0.9)
   ic:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
   ic:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
-  --shadows+background
+
+  -- Shadows+background
   if not bu.bg or uuidb.actionbars.overridecol then applyBackground(bu) end
+
   bu.rabs_styled = true
 end
 
---style possess buttons
+-- Style possess buttons
 local function stylePossessButton(bu, color)
   if not (color) then
     color = uuidb.actionbars.color.normal
@@ -478,19 +446,17 @@ local function stylePossessButton(bu, color)
   local fl  = _G[name.."Flash"]
   local nt  = _G[name.."NormalTexture"]
   nt:SetAllPoints(bu)
-  --applying color
+  -- Applying color
   nt:SetVertexColor(color.r, color.g, color.b, color.a)
-  --setting the textures
+  -- Setting the textures
   fl:SetTexture(uuidb.textures.buttons.flash)
-  --bu:SetHighlightTexture(uuidb.textures.buttons.hover)
   bu:SetPushedTexture(uuidb.textures.buttons.pushed)
-  --bu:SetCheckedTexture(uuidb.textures.buttons.checked)
   bu:SetNormalTexture(butex)
-  --cut the default border of the icons and make them shiny
+  -- Cut the default border of the icons and make them shiny
   ic:SetTexCoord(0.1,0.9,0.1,0.9)
   ic:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
   ic:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
-  --shadows+background
+  -- Shadows+background
   if not bu.bg or uuidb.actionbars.overridecol then applyBackground(bu) end
   bu.rabs_styled = true
 end
@@ -543,7 +509,7 @@ function actionbars:Macroname()
   end
 end
 
--- style bags
+-- Style bags
 local function styleBag(bu, color)
   if not (color) then
       color = uuidb.actionbars.bagiconcolor
@@ -567,34 +533,11 @@ local function styleBag(bu, color)
 	bo:Hide()
 	bo.Show = function() end
 	ic:SetTexCoord(0.1,0.9,0.1,0.9)
-      ic:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
-      ic:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
-    bu:SetNormalTexture(butex)
-	--bu:SetHighlightTexture(uuidb.textures.buttons.hover)
-      bu:SetPushedTexture(uuidb.textures.buttons.pushed)
-        --bu:SetCheckedTexture(uuidb.textures.buttons.checked)
-
-      --make sure the normaltexture stays the way we want it
-	--hooksecurefunc(bu, "SetNormalTexture", function(self, texture)
- --   if texture and texture ~= butex then
- --     self:SetNormalTexture(butex)
- --   end
- -- end)
-	--bu.Back = CreateFrame("Frame", nil, bu)
-	--	bu.Back:SetPoint("TOPLEFT", bu, "TOPLEFT", -4, 4)
-	--	bu.Back:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", 4, -4)
-	--	bu.Back:SetFrameLevel(bu:GetFrameLevel() - 1)
-	--	bu.Back:SetBackdrop(backdrop)
-	--	bu.Back:SetBackdropBorderColor(0, 0, 0, 0.9)
+  ic:SetPoint("TOPLEFT", bu, "TOPLEFT", 2, -2)
+  ic:SetPoint("BOTTOMRIGHT", bu, "BOTTOMRIGHT", -2, 2)
+  bu:SetNormalTexture(butex)
+  bu:SetPushedTexture(uuidb.textures.buttons.pushed)
 end
-
---update hotkey func
---local function updateHotkey(self, actionButtonType)
---  local ho = _G[self:GetName().."HotKey"]
---  if ho and not uuidb.actionbars.hotkey.show and ho:IsShown() then
---    ho:Hide()
---  end
---end
 
 ---------------------------------------
 -- INIT
@@ -604,7 +547,7 @@ function actionbars:ReworkAllColors(color)
     local color = nil
   end
 
-  --style the actionbar buttons
+  -- Style the actionbar buttons
   for i = 1, NUM_ACTIONBAR_BUTTONS do
     styleActionButton(_G["ActionButton"..i], color)
     styleActionButton(_G["MultiBarBottomLeftButton"..i], color)
@@ -613,45 +556,71 @@ function actionbars:ReworkAllColors(color)
     styleActionButton(_G["MultiBarLeftButton"..i], color)
   end
 
-	--style bags
+	-- Style bags
   for i = 0, 3 do
-	styleBag(_G["CharacterBag"..i.."Slot"], color)
+	  styleBag(_G["CharacterBag"..i.."Slot"], color)
   end
 	styleBag(MainMenuBarBackpackButton)
-  --for i = 1,6 do
-  --  styleActionButton(_G["OverrideActionBarButton"..i])
-  --end
 
-  --petbar buttons
+  -- Style leave button
+	styleLeaveButton(MainMenuBarVehicleLeaveButton)
+  styleLeaveButton(rABS_LeaveVehicleButton)
+
+  -- Petbar buttons
   for i=1, NUM_PET_ACTION_SLOTS do
     stylePetButton(_G["PetActionButton"..i], color)
   end
 
-  --stancebar buttons
+  -- Stancebar buttons
   for i=1, NUM_STANCE_SLOTS do
     styleStanceButton(_G["StanceButton"..i], color)
   end
 
-  --extraactionbutton1
+  -- Possess buttons
+  if _G["PossessButton1"] then
+    for i=1, NUM_POSSESS_SLOTS do
+      stylePossessButton(_G["PossessButton"..i], color)
+    end
+  end
+
+  -- Extraactionbutton1
   styleExtraActionButton(ExtraActionButton1, color)
-  
+
+	-- Not Available
+  if ZoneAbilityFrame then
+    styleExtraActionButton(ZoneAbilityFrame.SpellButton, color)
+  end
+
   -- Leave Button
   styleLeaveButton(_G["MainMenuBarVehicleLeaveButton"], color)
 
-  --dominos styling
+  -- Spell flyout
+  if SpellFlyoutBackgroundEnd and SpellFlyoutHorizontalBackground and SpellFlyoutVerticalBackground then
+    SpellFlyoutBackgroundEnd:SetTexture(nil)
+    SpellFlyoutHorizontalBackground:SetTexture(nil)
+    SpellFlyoutVerticalBackground:SetTexture(nil)
+
+    local function checkForFlyoutButtons(self)
+      local NUM_FLYOUT_BUTTONS = 10
+      for i = 1, NUM_FLYOUT_BUTTONS do
+        styleActionButton(_G["SpellFlyoutButton"..i], color)
+      end
+    end
+    SpellFlyout:HookScript("OnShow",checkForFlyoutButtons)
+  end
+
+  -- Dominos styling
   if dominos then
-    --print("Dominos found")
     for i = 1, 60 do
       styleActionButton(_G["DominosActionButton"..i], color)
     end
   end
 
-  --bartender4 styling
+  -- Bartender4 styling
   if bartender4 then
-    --print("Bartender4 found")
     for i = 1, 120 do
       styleActionButton(_G["BT4Button"..i], color)
-	stylePetButton(_G["BT4PetButton"..i], color)
+	    stylePetButton(_G["BT4PetButton"..i], color)
     end
   end
 end
@@ -661,7 +630,7 @@ function actionbars.EditColors(color)
     color = uuidb.actionbars.shadowcolor
   end
 
-  --style the actionbar buttons
+  -- Style the actionbar buttons
   for i = 1, NUM_ACTIONBAR_BUTTONS do
     _G["ActionButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
     _G["MultiBarBottomLeftButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
@@ -669,8 +638,8 @@ function actionbars.EditColors(color)
     _G["MultiBarRightButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
     _G["MultiBarLeftButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
   end
-  
-  --style bags
+
+  -- Style bags
   for i = 0, 3 do
     if _G["CharacterBag"..i.."Slot"].bg then
       _G["CharacterBag"..i.."Slot"].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
@@ -681,36 +650,35 @@ function actionbars.EditColors(color)
     MainMenuBarBackpackButton.bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
   end
   
-  --petbar buttons
+  -- Petbar buttons
   if UnitExists("pet") then
     for i=1, NUM_PET_ACTION_SLOTS do
       _G["PetActionButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
     end
   end
 
-  --stancebar buttons
+  -- Stancebar buttons
   for i=1, NUM_STANCE_SLOTS do
     if _G["StanceButton"..i].bg then
       _G["StanceButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
     end
   end
  
-  --dominos styling
+  -- Dominos styling
   if dominos then
-    --print("Dominos found")
     for i = 1, 60 do
       _G["DominosActionButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
     end
   end
 
-  --bartender4 styling
+  -- Bartender4 styling
   if bartender4 then
-    --print("Bartender4 found")
     for i = 1, 120 do
       _G["BT4Button"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
       _G["BT4PetButton"..i].bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
     end
   end
+
   uuidb.actionbars.overridecol = false
 end
 

@@ -1,10 +1,11 @@
---get the addon namespace
 local addon, ns = ...
 auras = {}
 
 local auras = CreateFrame("frame")
 auras:RegisterEvent("ADDON_LOADED")
 auras:RegisterEvent("UNIT_TARGET")
+auras:RegisterEvent("PLAYER_FOCUS_CHANGED")
+
 auras:SetScript("OnEvent", function(self,event)
 	if (event == "UNIT_TARGET") then
 		self:TargetSpellIcon()
@@ -13,27 +14,25 @@ auras:SetScript("OnEvent", function(self,event)
 	end
 end)
 local backdrop = {
-		bgFile = nil,
-		edgeFile = "Interface\\AddOns\\Uber UI\\textures\\outer_shadow",
-		tile = false,
-		tileSize = 32,
-		edgeSize = 4,
-		insets = {
-			left = 4,
-			right = 4,
-			top = 4,
-			bottom = 4,
-		},
-	}
+  bgFile = nil,
+  edgeFile = "Interface\\AddOns\\Uber UI Classic\\textures\\outer_shadow",
+  tile = false,
+  tileSize = 32,
+  edgeSize = 4,
+  insets = {
+    left = 4,
+    right = 4,
+    top = 4,
+    bottom = 4,
+  },
+}
 
- ---------------------------------------
-  -- FUNCTIONS
- ---------------------------------------
-
---apply aura frame texture func
+---------------------------------------
+-- FUNCTIONS
+---------------------------------------
+-- Apply aura frame texture func
 local function applySkin(b, color)
 	if not b then return end
-	--button name
 	local u = b.unit
 	local name = b:GetName()
 	if (name:match("Debuff")) then
@@ -44,7 +43,6 @@ local function applySkin(b, color)
 
 	local colors = color
 	local classification = UnitClassification(u)
-
 	if (uuidb.targetframe.colortargett == "All" or uuidb.targetframe.colortargett == "Class" or uuidb.targetframe.colortargett == "Class/Friendly/Hostile") and (UnitIsConnected(u) and UnitIsPlayer(u)) then
 		colors = RAID_CLASS_COLORS[select(2, UnitClass(u))]
 	elseif (uuidb.targetframe.colortargett == "All" or uuidb.targetframe.colortargett == "Rare/Elite") and (classification == 'elite' or classification == 'worldboss' or classification == 'rare' or classification == 'rareelite') then
@@ -68,20 +66,19 @@ local function applySkin(b, color)
 		colors = uuidb.general.customcolorval
 	else
 		colors = uuidb.auras.color
-	end
+  end
 
 	if b and b.styled then
 		b.bg:SetBackdropBorderColor(colors.r, colors.g, colors.b, colors.a)
 	end
 
 	if not b or (b and b.styled) then return end
-
-	--icon
+	-- Icon
 	local icon = _G[name.."Icon"]
 	icon:SetTexCoord(0.1, 0.9, 0.1, 0.9)
 	icon:SetDrawLayer("BACKGROUND",-8)
 	b.icon = icon
-	--border
+	-- Border
 	local border = _G[name.."Border"] or b:CreateTexture(name.."Border", "BACKGROUND", nil, -7)
 	border:SetTexture("Interface\\AddOns\\Uber UI Classic\\textures\\gloss")
 	border:SetTexCoord(0, 1, 0, 1)
@@ -90,51 +87,46 @@ local function applySkin(b, color)
 	border:SetPoint("TOPLEFT", b, "TOPLEFT", -1, 1)
 	border:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 1, -1)
 	b.border = border
-	--shadow
+	-- Shadow
 	local back = CreateFrame("Frame", nil, b, BackdropTemplateMixin and "BackdropTemplate")
-	back:SetPoint("TOPLEFT", b, "TOPLEFT", -2, 2)
-	back:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 2, -2)
+	back:SetPoint("TOPLEFT", b, "TOPLEFT", -4, 4)
+	back:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 4, -4)
 	back:SetFrameLevel(b:GetFrameLevel() - 1)
 	back:SetBackdrop(backdrop)
 	back:SetBackdropBorderColor(colors.r, colors.g, colors.b, colors.a)
 	b.bg = back
-	--set button styled variable
+	-- Set button styled variable
 	b.styled = true
 end
-
---apply castbar texture
 
 local function applycastSkin(b, color)
 	if not b or (b and b.styled) then
 		b.bg:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
 		return
 	end
-	---- parent
+
+	-- Parent
 	if b == TargetFrameSpellBar.Icon then
 		b.parent = TargetFrameSpellBar
 	else
 		b.parent = FocusFrameSpellBar
 	end
 
-	-- frame
+	-- Frame
 	frame = CreateFrame("Frame", nil, b.parent)
-	--icon
+	-- Icon
 	b:SetTexCoord(0.2, 0.8, 0.2, 0.8)
-	--border
+	-- Border
 	local border = frame:CreateTexture(nil, "BACKGROUND")
-	border:SetTexture("Interface\\AddOns\\Uber UI\\textures\\glosslight")
+	border:SetTexture("Interface\\AddOns\\Uber UI Classic\\textures\\glosslight")
 	border:SetTexCoord(0, 1, 0, 1)
 	border:SetDrawLayer("BACKGROUND",- 7)
 	border:ClearAllPoints()
 	border:SetPoint("TOPLEFT", b, "TOPLEFT", -1, 1)
 	border:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 1, -1)
-	--border color
-	--if (UnitIsConnected(border.unit)) and uuidb.targetframe.colortargett then
-	--	UberUI.general:ClassColored(border, border.unit)
-	--else
-	--end
+	-- Border color
 	b.border = border
-	--shadow
+	-- Shadow
 	local back = CreateFrame("Frame", nil, b.parent, BackdropTemplateMixin and "BackdropTemplate")
 	back:SetPoint("TOPLEFT", b, "TOPLEFT", -4, 4)
 	back:SetPoint("BOTTOMRIGHT", b, "BOTTOMRIGHT", 4, -4)
@@ -142,7 +134,7 @@ local function applycastSkin(b, color)
 	back:SetBackdrop(backdrop)
 	back:SetBackdropBorderColor(color.r, color.g, color.b, color.a)
 	b.bg = back
-	--set button styled variable
+	-- Set button styled variable
 	b.styled = true
 end
 
@@ -155,12 +147,12 @@ function auras:TargetSpellIcon()
 			else
 				local red,green,_ = UnitSelectionColor(u)
 				if (red == 0) then
-	        	    colors = { r = 0, g = 1, b = 0}
-	        	elseif (green == 0) then
-	        	    colors = { r = 1, g = 0, b = 0}
-	        	else
-	        	    colors = { r = 1, g = 1, b = 0}
-	        	end
+          colors = { r = 0, g = 1, b = 0}
+        elseif (green == 0) then
+          colors = { r = 1, g = 0, b = 0}
+        else
+          colors = { r = 1, g = 1, b = 0}
+        end
 			end
 		else
 			colors = uuidb.auras.color
@@ -178,12 +170,12 @@ function auras:FocusSpellIcon()
 			else
 				local red,green,_ = UnitSelectionColor(u)
 				if (red == 0) then
-	        	    colors = { r = 0, g = 1, b = 0}
-	        	elseif (green == 0) then
-	        	    colors = { r = 1, g = 0, b = 0}
-	        	else
-	        	    colors = { r = 1, g = 1, b = 0}
-	        	end
+          colors = { r = 0, g = 1, b = 0}
+        elseif (green == 0) then
+          colors = { r = 1, g = 0, b = 0}
+        else
+          colors = { r = 1, g = 1, b = 0}
+        end
 			end
 		else
 			colors = uuidb.auras.color
