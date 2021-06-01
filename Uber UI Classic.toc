@@ -1,5 +1,5 @@
 ## Interface: 20501
-## Version: 1.1.3-bcc
+## Version: 1.1.4-bcc
 
 ## Author: lorti, Uberlicious, Jadei
 ## Notes: Darkens and modifies original Blizzard UI.

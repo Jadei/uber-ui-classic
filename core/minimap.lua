@@ -44,9 +44,9 @@ function minimap:Other()
 	GameTimeFrame:Hide()
 	GameTimeFrame:UnregisterAllEvents()
 	GameTimeFrame.Show = kill
-	MiniMapTracking:Hide()
-	MiniMapTracking.Show = kill
-	MiniMapTracking:UnregisterAllEvents()
+	-- MiniMapTracking:Hide()
+	-- MiniMapTracking.Show = kill
+	-- MiniMapTracking:UnregisterAllEvents()
 	Minimap:EnableMouseWheel(true)
 	Minimap:SetScript("OnMouseWheel", function(self, z)
 		local c = Minimap:GetZoom()

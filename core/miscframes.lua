@@ -391,7 +391,7 @@ function misc:ReworkAllColor(color)
 	if not (color) then
 		color = uuidb.miscframes.misccolor
 	end
-	self:NameplateTexture()
+	-- self:NameplateTexture()
 	self:ExtraBars()
 	self:pvpicons(color)
 	self:PartyColor(color)
