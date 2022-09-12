@@ -21,7 +21,6 @@ function minimap:Color(color)
     }) do
 		v:SetVertexColor(color.r, color.g, color.b, color.a)
 	end
-
 	select(2, TimeManagerClockButton:GetRegions()):SetVertexColor(1,1,1)
 end
 
@@ -41,12 +40,12 @@ function minimap:Other()
 	MinimapZoomOut:Hide()
 	MiniMapWorldMapButton:Hide()
 	MinimapZoneText:SetPoint("CENTER", Minimap, 0, 80)
-	GameTimeFrame:Hide()
-	GameTimeFrame:UnregisterAllEvents()
-	GameTimeFrame.Show = kill
-	-- MiniMapTracking:Hide()
-	-- MiniMapTracking.Show = kill
-	-- MiniMapTracking:UnregisterAllEvents()
+	-- GameTimeFrame:Hide()
+	-- GameTimeFrame:UnregisterAllEvents()
+	-- GameTimeFrame.Show = kill
+	MiniMapTracking:Hide()
+	MiniMapTracking.Show = kill
+	MiniMapTracking:UnregisterAllEvents()
 	Minimap:EnableMouseWheel(true)
 	Minimap:SetScript("OnMouseWheel", function(self, z)
 		local c = Minimap:GetZoom()
@@ -57,11 +56,9 @@ function minimap:Other()
 		end
 	end)
 	Minimap:SetScript("OnMouseUp", function(self, btn)
-		-- Commentaires: GameTimeFrame n'existe pas encore
-		-- if btn == "RightButton" and _G.GameTimeFrame then
-		-- 	_G.GameTimeFrame:Click()
-		-- elseif btn == "MiddleButton" then
-		if btn == "MiddleButton" then
+		if btn == "RightButton" then
+			_G.GameTimeFrame:Click()
+		elseif btn == "MiddleButton" then
 			_G.ToggleDropDownMenu(1, nil, _G.MiniMapTrackingDropDown, self)
 		else
 			_G.Minimap_OnClick(self)
@@ -74,7 +71,7 @@ function minimap:ReworkAllColor(color)
 		color = uuidb.minimap.color
 	end
 	self:Color(color)
-	self:GarrisonBtn(color)
+	-- self:GarrisonBtn(color)
 	self:Other()
 end
 
