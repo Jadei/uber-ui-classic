@@ -5,9 +5,8 @@ playerframes = CreateFrame("frame")
 playerframes:RegisterEvent("ADDON_LOADED")
 playerframes:RegisterEvent("PLAYER_LOGIN")
 playerframes:RegisterEvent("PLAYER_ENTERING_WORLD")
--- Commentaire: Pas encore de véhicule
--- playerframes:RegisterEvent("UNIT_ENTERED_VEHICLE")
--- playerframes:RegisterEvent("UNIT_EXITED_VEHICLE")
+playerframes:RegisterEvent("UNIT_ENTERED_VEHICLE")
+playerframes:RegisterEvent("UNIT_EXITED_VEHICLE")
 
 playerframes:SetScript("OnEvent", function(self,event)
 	if not ((IsAddOnLoaded("EasyFrames")) or (IsAddOnLoaded("Shadowed Unit Frames")) or (IsAddOnLoaded("PitBull Unit Frames 4.0")) or (IsAddOnLoaded("X-Perl UnitFrames"))) then
@@ -22,12 +21,11 @@ playerframes:SetScript("OnEvent", function(self,event)
 		hooksecurefunc("PlayerFrame_ToPlayerArt", uui_playerframes_LargeHealth)
 	end
 
-	-- Commentaire: Pas encore de véhicule
-	-- current_v_state = UnitInVehicle("Player")
-	-- prev_v_state = false
-	-- if current_v_state ~= prev_v_state and uuidb.playerframe.largehealth then
-	-- 	uui_playerframes_LargeHealth()
-	-- end
+	current_v_state = UnitInVehicle("Player")
+	prev_v_state = false
+	if current_v_state ~= prev_v_state and uuidb.playerframe.largehealth then
+		uui_playerframes_LargeHealth()
+	end
 end)
 
 local function MiscFrames(color)
@@ -106,9 +104,7 @@ function uui_playerframes_LargeHealth(color)
 		color = uuidb.playerframe.color
 	end
 
-	-- Commentaire: Pas encore de véhicule
-	-- if uuidb.playerframe.largehealth and not UnitInVehicle("Player") then
-	if uuidb.playerframe.largehealth then
+	if uuidb.playerframe.largehealth and not UnitInVehicle("Player") then
 		PlayerFrameTexture:SetTexture("Interface\\Addons\\Uber UI Classic\\textures\\target\\targetingframebig")
 		PlayerFrameTexture:SetVertexColor(color.r, color.g, color.b, color.a)
 		PlayerFrameGroupIndicatorText:ClearAllPoints()
@@ -147,13 +143,12 @@ function uui_playerframes_LargeHealth(color)
       PlayerFrameManaBar.FullPowerFrame.SpikeFrame.BigSpikeGlow:SetPoint("CENTER",PlayerFrameManaBar.FullPowerFrame,"RIGHT",5,-4)
       PlayerFrameManaBar.FullPowerFrame.SpikeFrame.BigSpikeGlow:SetSize(30, 50)
     end 
-	-- Commentaire: Pas encore de véhicule
-	-- elseif uuidb.playerframe.largehealth and UnitInVehicle("Player") and (PlayerFrame.state == "vehicle" or PlayerFrameTexture:GetTexture() ~= "Interface\\Addons\\Uber UI Classic\\textures\\target\\targetingframebig") then
-	-- 	PlayerFrameHealthBar:SetHeight(12)
-	-- 	PlayerFrameHealthBar.LeftText:ClearAllPoints()
-	-- 	PlayerFrameHealthBar.LeftText:SetPoint("LEFT", PlayerFrameHealthBar, "LEFT", 10, 0)
-	-- 	PlayerFrameHealthBar.RightText:ClearAllPoints()
-	-- 	PlayerFrameHealthBar.RightText:SetPoint("RIGHT", PlayerFrameHealthBar, "RIGHT", -5, 0)
+	elseif uuidb.playerframe.largehealth and UnitInVehicle("Player") and (PlayerFrame.state == "vehicle" or PlayerFrameTexture:GetTexture() ~= "Interface\\Addons\\Uber UI Classic\\textures\\target\\targetingframebig") then
+		PlayerFrameHealthBar:SetHeight(12)
+		PlayerFrameHealthBar.LeftText:ClearAllPoints()
+		PlayerFrameHealthBar.LeftText:SetPoint("LEFT", PlayerFrameHealthBar, "LEFT", 10, 0)
+		PlayerFrameHealthBar.RightText:ClearAllPoints()
+		PlayerFrameHealthBar.RightText:SetPoint("RIGHT", PlayerFrameHealthBar, "RIGHT", -5, 0)
 	end
 
 	if pcount == 0 then
