@@ -90,7 +90,7 @@ local function applyBackground(bu)
   end
 
   if uuidb.actionbars.showbg and not uuidb.actionbars.useflatbackground then
-    local t = bu.bg:CreateTexture(nil,"BACKGROUND",-8)
+    local t = bu.bg:CreateTexture(nil, "BACKGROUND", nil)
     t:SetTexture(nil)
     t:SetTexture(uuidb.textures.buttons.buttonback)
     t:SetVertexColor(backgroundcolor.r,backgroundcolor.g,backgroundcolor.b,backgroundcolor.a)

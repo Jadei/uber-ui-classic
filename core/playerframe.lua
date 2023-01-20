@@ -80,18 +80,20 @@ local function MiscFrames(color)
       TotemFrameTotem3,
       TotemFrameTotem4
 	}) do
-	   for _,child in pairs({v:GetChildren()}) do
-	      local name = child:GetName()
-	      if name == nil then
-	         local regions = child:GetRegions()
-	         for _,region in pairs({regions}) do
-	            if region:GetTexture():find("TotemBorder") then
-	            	region:SetTexture("Interface\\AddOns\\Uber UI Classic\\textures\\TotemBorder")
-	            	region:SetVertexColor(color.r, color.g, color.b, color.a)
-	            end
-	         end
-	      end
-	   end
+		if(_G[v]) then
+			for _,child in pairs({v:GetChildren()}) do
+				local name = child:GetName()
+				if name == nil then
+					local regions = child:GetRegions()
+					for _,region in pairs({regions}) do
+						if region:GetTexture():find("TotemBorder") then
+							region:SetTexture("Interface\\AddOns\\Uber UI Classic\\textures\\TotemBorder")
+							region:SetVertexColor(color.r, color.g, color.b, color.a)
+						end
+					end
+				end
+			end
+		end
 	end
 end
 
