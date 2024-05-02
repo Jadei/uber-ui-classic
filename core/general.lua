@@ -160,8 +160,8 @@ function general:BarTexture(value)
   for _, healthbar in pairs(healthBars) do
       healthbar:SetStatusBarTexture(texture)
       if(healthbar == PetFrameHealthBar or healthbar == PetFrameManaBar) then
-        healthbar.LeftText:SetFont("Fonts\\MORPHEUS.ttf", 10, "OUTLINE")
-        healthbar.RightText:SetFont("Fonts\\MORPHEUS.ttf", 10, "OUTLINE")
+        -- todo healthbar.LeftText:SetFont("Fonts\\MORPHEUS.ttf", 10, "OUTLINE")
+        -- todo healthbar.RightText:SetFont("Fonts\\MORPHEUS.ttf", 10, "OUTLINE")
       end
   end
 
@@ -186,7 +186,7 @@ function general:BarTexture(value)
   end
 
   for _,v in pairs(nonStatusBars) do
-    v:SetTexture(texture)
+    -- todo v:SetTexture(texture)
   end
 
   if PlayerFrameTotalAbsorbBar then

@@ -1,5 +1,5 @@
-## Interface: 30403
-## Version: 1.1.9
+## Interface: 40400
+## Version: 1.2.0
 
 ## Author: lorti, Uberlicious, Jadei
 ## Notes: Darkens and modifies original Blizzard UI.
